@@ -1,9 +1,7 @@
 package ru.hogwarts.school.service;
 
-import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
-
 import java.util.List;
 
 public interface StudentService {
@@ -13,4 +11,7 @@ public interface StudentService {
     void deleteStudent(Long id);
     Student updateStudent(Long id, Student student);
     List<Student> getStudentsByAge(Long age);
+    List<Student> getStudentsByAgeBetween(Long minAge, Long maxAge);
+    Faculty getStudentFaculty(Long studentId);
+
 }
