@@ -1,6 +1,8 @@
 package ru.hogwarts.school.service;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 public class AvatarService {
 
 
+    private final Logger logger = LoggerFactory.getLogger(AvatarService.class);
     private final String avatarsDir;
     private final AvatarRepository avatarRepository;
     private final StudentRepository studentRepository;
@@ -39,6 +42,7 @@ public class AvatarService {
     }
 
     public ResponseEntity<String> uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
+        logger.info("Was invoked method uploadAvatar");
         Student student = studentRepository.getById(studentId);
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
@@ -61,10 +65,12 @@ public class AvatarService {
         return ResponseEntity.ok().build();
     }
     private String getExtensions(String fileName) {
+        logger.info("Was invoked method getExtensions");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
     public ResponseEntity<byte[]> downloadAvatarFromDB(Long id) {
+        logger.info("Was invoked method downloadAvatarFromDB");
         Avatar avatar = avatarRepository.findById(id).get();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
@@ -73,6 +79,7 @@ public class AvatarService {
     }
 
     public void downloadAvatar(Long id, HttpServletResponse response) throws IOException{
+        logger.info("Was invoked method downloadAvatar");
         Avatar avatar = avatarRepository.findById(id).get();
         Path path = Path.of(avatar.getFilePath());
         try(InputStream is = Files.newInputStream(path);
@@ -85,6 +92,7 @@ public class AvatarService {
     }
 
     public List<Avatar> getAvatars(int page, int size) {
+        logger.info("Was invoked method getAvatars");
         Pageable pageable = PageRequest.of(page, size);
         return avatarRepository.findAll(pageable).getContent();
     }
