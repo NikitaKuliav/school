@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class FacultyServiceImpl implements FacultyService{
+public class FacultyServiceImpl implements FacultyService {
 
     private final Logger logger = LoggerFactory.getLogger(FacultyService.class);
 
@@ -67,5 +67,14 @@ public class FacultyServiceImpl implements FacultyService{
     public Collection<Student> getFacultyStudents(Long facultyId) {
         logger.info("Was invoked method getFacultyStudents");
         return facultyRepository.findStudentsById(facultyId);
+    }
+
+    @Override
+    public String getLongestName() {
+        logger.info("Was invoked method getLongestName");
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max((name1, name2) -> name1.length() - name2.length())
+                .get();
     }
 }
