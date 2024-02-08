@@ -102,4 +102,14 @@ public class StudentController {
                 .limit(1_000_000)
                 .reduce(0, (a, b) -> a + b);
     }
+
+    @GetMapping("/print-parallel")
+    public void printParallel() {
+        studentService.printStudents();
+    }
+
+    @GetMapping("/print-synchronized")
+    public void printSynchronized() {
+        studentService.printStudentsSync();
+    }
 }
