@@ -9,6 +9,7 @@ import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/students")
@@ -16,28 +17,28 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    public StudentController(StudentService studentService){
+    public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable Long id){
+    public ResponseEntity<Student> getStudent(@PathVariable Long id) {
         Student student = studentService.getStudent(id);
-        if(student == null) {
+        if (student == null) {
             ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(student);
     }
 
     @PostMapping
-    public Student createStudent(@RequestBody Student student){
+    public Student createStudent(@RequestBody Student student) {
         return studentService.addStudent(student);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student){
+    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student) {
         Student foundStudent = studentService.updateStudent(id, student);
-        if(foundStudent == null) {
+        if (foundStudent == null) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(student);
@@ -45,13 +46,13 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteStudent(@PathVariable Long id){
+    public ResponseEntity deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping(params = "age")
-    public Collection<Student> getStudentsByAge(@RequestParam Long age){
+    public Collection<Student> getStudentsByAge(@RequestParam Long age) {
         return studentService.getStudentsByAge(age);
     }
 
@@ -82,5 +83,23 @@ public class StudentController {
     @GetMapping("/lastFive")
     public List<Student> getLastFive() {
         return studentService.getLastFive();
+    }
+
+    @GetMapping("/names-start-with-a")
+    public List<String> getAllNamesStartWithA() {
+        return studentService.getAllNamesStartWithA();
+    }
+
+    @GetMapping("/avg-age-with-stream")
+    public double getAvgAgeWithStream() {
+        return studentService.getAvgAgeWithStream();
+    }
+
+    @GetMapping("/sum-parallel")
+    public void getSumParallel() {
+        int sum = Stream.iterate(1, a -> a + 1)
+                .parallel()
+                .limit(1_000_000)
+                .reduce(0, (a, b) -> a + b);
     }
 }
